@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -18,15 +19,15 @@ export default function Breadcrumbs({
     return (
         <Breadcrumb>
             <BreadcrumbList>
-                {links.slice(0, -1).map((link) => (
-                    <>
+                {links.slice(0, -1).map((link, id) => (
+                    <Fragment key={id}>
                         <BreadcrumbItem>
                             <BreadcrumbLink href={link.href}>
                                 {link.label}
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
-                    </>
+                    </Fragment>
                 ))}
                 <BreadcrumbItem>
                     <BreadcrumbPage>

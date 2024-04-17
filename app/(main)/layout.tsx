@@ -25,7 +25,9 @@ export default async function Layout({
             <div className="flex flex-col">
                 <header className="bg-muted/40 flex h-14 items-center gap-4 border-b px-4 lg:h-[60px] lg:px-6">
                     <MobileNavbar />
-                    <div className="w-full flex-1"></div>
+                    <div className="w-full flex-1">
+                        <Searchbar />
+                    </div>
                     <ProfileDropdown />
                 </header>
                 {children}

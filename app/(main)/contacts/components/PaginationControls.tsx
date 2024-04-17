@@ -44,11 +44,9 @@ function pagination({
 function PaginationNumberButton({
     text,
     currentPage,
-    campaignId,
 }: {
     text: PaginationTextType;
     currentPage: number;
-    campaignId: string;
 }) {
     if (text === "...") {
         return (
@@ -61,7 +59,7 @@ function PaginationNumberButton({
         return (
             <Link
                 href={{
-                    pathname: `/campaigns/${campaignId}`,
+                    pathname: `/contacts`,
                     query: { page: text },
                 }}
                 aria-current="page"
@@ -74,7 +72,7 @@ function PaginationNumberButton({
     return (
         <Link
             href={{
-                pathname: `/campaigns/${campaignId}`,
+                pathname: `/contacts`,
                 query: { page: text },
             }}
             className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
@@ -113,14 +111,12 @@ export default function PaginationControls({
     total = 10,
     from = 1,
     to = 10,
-    campaignId,
 }: {
     limit: number;
     page: number;
     total: number;
     from: number;
     to: number;
-    campaignId: string;
 }) {
     const numPages = Math.ceil(total / limit);
     const pages = pagination({ page, numPages });
@@ -130,7 +126,7 @@ export default function PaginationControls({
             <div className="flex flex-1 justify-between sm:hidden">
                 <Link
                     href={{
-                        pathname: `/campaigns/${campaignId}`,
+                        pathname: `/contacts`,
                         query: { page: page > 1 ? page - 1 : 1 },
                     }}
                     className={cn(
@@ -142,7 +138,7 @@ export default function PaginationControls({
                 </Link>
                 <Link
                     href={{
-                        pathname: `/campaigns/${campaignId}`,
+                        pathname: `/contacts`,
                         query: { page: page < numPages ? page + 1 : numPages },
                     }}
                     className={cn(
@@ -162,7 +158,7 @@ export default function PaginationControls({
                     >
                         <Link
                             href={{
-                                pathname: `/campaigns/${campaignId}`,
+                                pathname: `/contacts`,
                                 query: { page: page > 1 ? page - 1 : 1 },
                             }}
                             className={cn(
@@ -182,12 +178,11 @@ export default function PaginationControls({
                                 key={index}
                                 text={text}
                                 currentPage={page}
-                                campaignId={campaignId}
                             />
                         ))}
                         <Link
                             href={{
-                                pathname: `/campaigns/${campaignId}`,
+                                pathname: `/contacts`,
                                 query: {
                                     page: page < numPages ? page + 1 : numPages,
                                 },
