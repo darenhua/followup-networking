@@ -1,4 +1,8 @@
+import { redirect } from "next/navigation";
+
 export default async function Page() {
+    console.log(process.env.NEXT_PUBLIC_API_URL);
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <div className="flex items-center">
@@ -9,7 +13,7 @@ export default async function Page() {
                     <h3 className="text-2xl font-bold tracking-tight">
                         You have no campaigns
                     </h3>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-sm text-muted-foreground">
                         Contact Follow Up support to gain access to over 10,000+
                         connections.
                     </p>

@@ -1,4 +1,6 @@
-import { Button } from "@/components/ui/button";
+'use client'
+
+import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -6,30 +8,32 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { CircleUser } from "lucide-react";
+} from '@/components/ui/dropdown-menu'
+import { logout } from '@/lib/auth'
+import { CircleUser } from 'lucide-react'
+import Link from 'next/link'
+import { useTransition } from 'react'
 
-export default async function ProfileDropdown() {
+export default function ProfileDropdown() {
+    const [isPending, startTransition] = useTransition()
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button
-                    variant="secondary"
-                    size="icon"
-                    className="rounded-full"
-                >
+                <Button variant="secondary" size="icon" className="rounded-full">
                     <CircleUser className="h-5 w-5" />
                     <span className="sr-only">Toggle user menu</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link href="/onboarding">Redo Onboarding</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => startTransition(() => logout())}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
-    );
+    )
 }
