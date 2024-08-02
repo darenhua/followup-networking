@@ -1,56 +1,64 @@
+'use client'
+
+import { useState } from 'react'
 import { z } from 'zod'
-import { CampaignEmail, columns } from './Columns'
+import { Contact, columns } from './Columns'
 import DataTable from './DataTable'
 import Filters, { filtersFormSchema } from './Filters'
 import PaginationControls from './PaginationControls'
 
-interface PaginationProps {
-    limit: number
-    page: number
-    total: number
-    from: number
-    to: number
-}
-
-export default async function LeadsTable({
+export default function ContactsTable({
     defaultValues,
     filterOptions,
     search,
+    contacts,
     paginationProps,
-    campaigns,
-    campaignId,
+    campaignNames,
 }: {
     defaultValues: z.infer<typeof filtersFormSchema>
     filterOptions: {
         typeOptions: string[]
         companyOptions: string[]
         locationOptions: string[]
+        levelOptions: string[]
         universityOptions: string[]
     }
     search: string | null
-    paginationProps: PaginationProps
-    campaigns: CampaignEmail[]
-    campaignId: string
+    contacts: Contact[]
+    paginationProps: {
+        limit: number
+        page: number
+        total: number
+        from: number
+        to: number
+    }
+    campaignNames: string[]
 }) {
+    const [rowSelection, setRowSelection] = useState({})
+
     return (
-        <>
+        <div className="flex flex-1 flex-col">
             <Filters
                 search={search}
+                rowSelection={rowSelection}
                 defaultValues={defaultValues}
                 filterOptions={filterOptions}
-                campaignId={campaignId}
+                setRowSelection={setRowSelection}
+                campaignNames={campaignNames}
             />
-            <div className="mt-3">
-                <DataTable columns={columns} data={campaigns} />
-            </div>
+            <DataTable
+                columns={columns}
+                data={contacts}
+                rowSelection={rowSelection}
+                setRowSelection={setRowSelection}
+            />
             <PaginationControls
                 limit={paginationProps.limit}
                 page={paginationProps.page}
                 total={paginationProps.total}
                 from={paginationProps.from}
                 to={paginationProps.to}
-                campaignId={campaignId}
             />
-        </>
+        </div>
     )
 }

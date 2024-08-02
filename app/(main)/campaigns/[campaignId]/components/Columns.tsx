@@ -1,95 +1,105 @@
-"use client";
+'use client'
 
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { ColumnDef } from '@tanstack/react-table'
+import { Trash2 } from 'lucide-react'
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
-    id: string;
-    amount: number;
-    status: "pending" | "processing" | "success" | "failed";
-    email: string;
-};
+export type CampaignEmail = {
+    id: number
+    email: string
+    first_name: string
+    last_name: string
+    company: string
+    type: string
+    location: string
+    title: string
+    university: string
+    campaign_name: string
+}
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<CampaignEmail>[] = [
     {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) =>
-                    table.toggleAllPageRowsSelected(!!value)
-                }
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-    },
-    {
-        accessorKey: "status",
-        header: "Status",
-    },
-    {
-        accessorKey: "email",
-        header: "Email",
-    },
-    {
-        accessorKey: "amount",
-        header: "Amount",
-    },
-
-    {
-        id: "actions",
+        header: 'Contact',
         cell: ({ row }) => {
-            const payment = row.original;
+            return (
+                <div className="mr-3 min-w-48 max-w-64">
+                    <div className="font-medium text-gray-900">
+                        {' '}
+                        <span>{row.original.first_name} </span>
+                        <span>{row.original.last_name}</span>
+                    </div>
+                    <div className="mt-1 text-gray-500">
+                        {row.original.title} at {row.original.company}
+                    </div>
+                </div>
+            )
+        },
+    },
+
+    {
+        header: 'Email',
+        cell: ({ row }) => {
+            return <p className="overflow-clip text-wrap">{row.original.email}</p>
+        },
+    },
+    {
+        accessorKey: 'type',
+        header: 'Type',
+    },
+    {
+        accessorKey: 'location',
+        header: 'Location',
+    },
+    {
+        accessorKey: 'university',
+        header: 'University',
+    },
+    {
+        id: 'remove',
+        cell: ({ row }) => {
+            const email = row.original
 
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button size={'icon'} variant="ghost">
+                            <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() =>
-                                navigator.clipboard.writeText(payment.id)
-                            }
-                        >
-                            Copy payment ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>
-                            View payment details
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Confirm remove from campaign.</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Are you sure you want to remove {email.email} from your campaign?
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={async () => {
+                                    await console.log('hi')
+                                }}
+                            >
+                                Continue
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )
         },
     },
     // ...
-];
+]

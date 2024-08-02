@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Home, Package, ShoppingCart } from 'lucide-react'
+import { BookUser, Home, Package, Scroll } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -14,17 +14,17 @@ export default function Navbar() {
         },
         {
             title: 'Campaigns',
-            icon: ShoppingCart,
+            icon: Package,
             href: '/campaigns',
         },
         {
             title: 'Contacts',
-            icon: Package,
+            icon: BookUser,
             href: '/contacts',
         },
         {
             title: 'Templates',
-            icon: Package,
+            icon: Scroll,
             href: '/templates',
         },
     ]

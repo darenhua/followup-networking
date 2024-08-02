@@ -19,7 +19,7 @@ export default function ProfileDropdown() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="icon" className="rounded-full">
+                <Button variant="secondary" size="icon" className="rounded-full bg-white">
                     <CircleUser className="h-5 w-5" />
                     <span className="sr-only">Toggle user menu</span>
                 </Button>
@@ -27,7 +27,9 @@ export default function ProfileDropdown() {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link href="mailto:dhua@hamilton.edu">Contact Support</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                     <Link href="/onboarding">Redo Onboarding</Link>
                 </DropdownMenuItem>

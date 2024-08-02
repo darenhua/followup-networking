@@ -1,78 +1,71 @@
-import Link from "next/link";
-import DataTable from "./components/DataTable";
-import { Contact, columns } from "./components/Columns";
-import PaginationControls from "./components/PaginationControls";
-import Filters from "./components/Filters";
-
-const contacts: Contact[] = [
-    {
-        id: "1",
-        amount: 100,
-        status: "pending",
-        email: "m@example.com",
-    },
-    {
-        id: "2",
-        amount: 125,
-        status: "processing",
-        email: "example@gmail.com",
-    },
-];
+import { AuthenticatedHttpClient } from '@/lib/axios'
+import { Contact } from './components/Columns'
+import ContactsTable from './components/ContactsTable'
 
 export default async function Page({
     searchParams,
 }: {
-    searchParams: { [key: string]: string | string[] | undefined };
+    searchParams: { [key: string]: string | string[] | undefined }
 }) {
     // Pagination logic
-    const page =
-        typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
-    const limit =
-        typeof searchParams.limit === "string"
-            ? Number(searchParams.limit)
-            : 10;
-    const { from, to } = { from: (page - 1) * limit, to: page * limit };
+    const page = typeof searchParams.page === 'string' ? Number(searchParams.page) : 1
+    const limit = typeof searchParams.limit === 'string' ? Number(searchParams.limit) : 50
+    const { from, to } = { from: (page - 1) * limit, to: page * limit }
+
+    for (const searchParam of Object.values(searchParams)) {
+        if (Array.isArray(searchParam)) {
+            throw new Error('Sorry, something went wrong!')
+        }
+    }
+
+    // Filtering options
+    const defaultFilters = {
+        typeFilter: (searchParams.typeFilter ?? '') as string,
+        companyFilter: (searchParams.companyFilter ?? '') as string,
+        locationFilter: (searchParams.locationFilter ?? '') as string,
+        levelFilter: (searchParams.levelFilter ?? '') as string,
+        universityFilter: (searchParams.universityFilter ?? '') as string,
+    }
+    const search = (searchParams.search ?? '') as string
+
+    const httpClient = AuthenticatedHttpClient()
+
+    const backendSearchParams = new URLSearchParams(defaultFilters)
+
+    const contactsRes = await httpClient.get(`contact-list/?q=${search}&${backendSearchParams.toString()}&page=${page}`)
+    const contacts: Contact[] = contactsRes.data.contacts
+
+    const campaignNames = contactsRes.data.campaign_names
+
+    const filterOptions = {
+        typeOptions: contactsRes.data.distinct_types,
+        companyOptions: contactsRes.data.distinct_companies,
+        locationOptions: contactsRes.data.distinct_locations,
+        levelOptions: contactsRes.data.distinct_levels,
+        universityOptions: contactsRes.data.distinct_university,
+    }
 
     const paginationProps = {
         limit,
         page,
-        total: 2,
+        total: contacts.length,
         from,
         to,
-    };
+    }
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <div className="flex items-center">
                 <h1 className="text-lg font-semibold md:text-2xl">Contacts</h1>
             </div>
-
-            {contacts.length > 0 && (
-                <div className="flex flex-1 flex-col">
-                    <Filters />
-                    <DataTable columns={columns} data={contacts} />
-                    <PaginationControls
-                        limit={paginationProps.limit}
-                        page={paginationProps.page}
-                        total={paginationProps.total}
-                        from={paginationProps.from}
-                        to={paginationProps.to}
-                    />
-                </div>
-            )}
-
-            {contacts.length === 0 && (
-                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-                    <div className="flex flex-col items-center gap-1 text-center">
-                        <h3 className="text-2xl font-bold tracking-tight">
-                            You have no contacts
-                        </h3>
-                        <p className="text-muted-foreground text-sm">
-                            Contact Follow Up support to gain access to over
-                            10,000+ connections.
-                        </p>
-                    </div>
-                </div>
-            )}
+            <ContactsTable
+                defaultValues={defaultFilters}
+                filterOptions={filterOptions}
+                search={search}
+                contacts={contacts}
+                paginationProps={paginationProps}
+                campaignNames={campaignNames}
+            />
         </main>
-    );
+    )
 }

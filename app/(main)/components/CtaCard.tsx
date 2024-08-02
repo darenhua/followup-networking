@@ -1,27 +1,21 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import Link from 'next/link'
 
 export default async function CtaCard() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                    Unlock all features and get unlimited access to our support
-                    team.
-                </CardDescription>
+                <CardTitle>Upgrade to Follow Up Pro</CardTitle>
+                <CardDescription>Unlock all features and get unlimited access to our support team.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Button size="sm" className="w-full">
-                    Upgrade
-                </Button>
+                <Link href="mailto:dhua@hamilton.edu">
+                    <Button size="sm" className="w-full">
+                        Upgrade
+                    </Button>
+                </Link>
             </CardContent>
         </Card>
-    );
+    )
 }

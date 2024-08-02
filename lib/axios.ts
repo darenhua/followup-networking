@@ -14,7 +14,8 @@ export function AuthenticatedHttpClient() {
 
     return axios.create({
         baseURL: `${apiUrl}/`,
-        timeout: 1000,
+        timeout: 5000,
+        signal: AbortSignal.timeout(5000),
         headers: {
             'Content-Type': 'application/json',
             Cookie: `csrftoken=${csrfToken.value}; superuser_sessionid=${sessionId.value}`,

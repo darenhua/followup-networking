@@ -5,17 +5,13 @@ import { AnonHttpClient } from '@/lib/axios'
 import { createSafeActionClient } from 'next-safe-action'
 import * as z from 'zod'
 
-const action = createSafeActionClient({
-    handleReturnedServerError(e) {
-        return e.message
-    },
-})
-
 const schema = z.object({
     appPassword: z.string().min(1).max(50),
 })
 
-export const submitAppPassword = async ({ appPassword }: z.infer<typeof schema>) => {
+const actionClient = createSafeActionClient()
+
+export const submitAppPasswordAction = actionClient.schema(schema).action(async ({ parsedInput: { appPassword } }) => {
     const httpClient = await AnonHttpClient()
     const user = await getUserOrRedirect()
     const { id, ...rest } = user
@@ -26,6 +22,4 @@ export const submitAppPassword = async ({ appPassword }: z.infer<typeof schema>)
     } catch {
         throw new Error('Error submitting app password.')
     }
-}
-
-export const submitAppPasswordAction = action(schema, submitAppPassword)
+})
