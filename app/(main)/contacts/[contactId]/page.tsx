@@ -1,31 +1,18 @@
 import Breadcrumbs from '@/components/Breadcrumbs'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AuthenticatedHttpClient } from '@/lib/axios'
 import Link from 'next/link'
-import { Contact } from '../components/Columns'
+import AddToCampaignButton from './components/AddToCampaignButton'
 import SendEmailButton from './components/SendEmailButton'
 
-const contacts: Contact[] = [
-    {
-        id: 1,
-        first_name: 'Daren',
-        last_name: 'Hua',
-        email: 'dhua@hamilton.edu',
-        title: 'Software Engineer Intern',
-        company: 'Gleam',
-        type: 'Test',
-        location: 'NYC',
-        level: 'Test Level',
-        university: 'Hamilton College',
-        linkedin: 'https://www.asdasd.com',
-    },
-]
+interface Campaign {
+    id: string
+    name: string
+    count: number
+    status: string
+}
 
-export default async function Page({ params }: { params: { contactId: string } }) {
-    const contactId = params.contactId
-    const contact = contacts[Number(contactId) - 1]
-
+export default async function Page({ params }: { params: { contactId: number } }) {
     const httpClient = AuthenticatedHttpClient()
     let templatesRes = null
     try {
@@ -34,7 +21,15 @@ export default async function Page({ params }: { params: { contactId: string } }
     } catch {
         throw new Error('Something went wrong')
     }
-    console.log(templatesRes)
+
+    const res = await httpClient.get('/campaign')
+    const campaignNames = res.data['distinct_campaigns']
+
+    const contactRes = await httpClient.get(`get_selected_contacts/?contactIds[]=${params.contactId}`)
+    const contact = contactRes.data['contacts'][0]
+
+    const campaignEmails = res.data['campaign_emails'].filter((email: any) => email.email === contact.email)
+    const containedCampaigns = campaignEmails.map((email: any) => email.campaign_name)
 
     const templates = templatesRes.map((template: any, i: number) => ({
         id: `${i + 1}`,
@@ -63,20 +58,34 @@ export default async function Page({ params }: { params: { contactId: string } }
                         <SendEmailButton
                             templates={templateOptions}
                             name={`${contact.first_name} ${contact.last_name}`}
-                            contactId={contactId}
+                            contactId={params.contactId}
                         />
-                        <Button>Add to Campaign</Button>
+                        <AddToCampaignButton
+                            campaignNames={campaignNames.filter((name: string) => !containedCampaigns.includes(name))}
+                            lead={contact}
+                        />
                     </div>
                 </div>
             </div>
 
-            <div className="mt-10 flex flex-1 flex-col items-center gap-2">
+            <div className="mb-6 mt-10 flex flex-1 flex-col items-center gap-2">
                 {/* <h2 className="text-lg font-semibold">Details</h2> */}
                 <Card className="w-full max-w-lg">
                     <CardHeader>
                         <CardTitle className="my-3 text-center text-lg md:text-xl">
                             {contact.first_name} {contact.last_name}
                         </CardTitle>
+                        <div className="flex items-center justify-center gap-3">
+                            {containedCampaigns.map((name: string, id: number) => {
+                                return (
+                                    <Link key={id} href={`/campaigns/${name}`}>
+                                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                                            {name}
+                                        </span>
+                                    </Link>
+                                )
+                            })}
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-6">

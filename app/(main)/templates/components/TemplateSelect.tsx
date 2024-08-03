@@ -52,7 +52,6 @@ export default function TemplateSelect({
             toast.error('Sorry, something went wrong.')
             return null
         }
-        console.log(templates)
 
         const campaign = templates.user_emails.find((campaign) => campaign.campaign === campaignId)
 
@@ -91,10 +90,11 @@ export default function TemplateSelect({
     })
     const [campaignId, setCampaignId] = useState<number | null>(() => {
         const campaign = getTemplateFromCampaignName(campaignNames[0])
-        return campaign?.id ?? null
+        return campaign?.campaign ?? null
     })
 
-    console.log(selectedTemplate)
+    const campaignName: string | null =
+        templates.campaign_names.find((campaign) => campaign.id === campaignId)?.name ?? null
 
     return (
         <>
@@ -105,7 +105,7 @@ export default function TemplateSelect({
                     onValueChange={(value) => {
                         const campaign = getTemplateFromCampaignName(value)
                         const newTemplate = getSelectedTemplateOrDefault(campaign)
-                        const campaignId = campaign?.id ?? null
+                        const campaignId = campaign?.campaign ?? null
                         setSelectedTemplate(newTemplate)
                         setCampaignId(campaignId)
                     }}
@@ -125,7 +125,7 @@ export default function TemplateSelect({
                 </Select>
             </div>
             <div className="max-w-2xl">
-                <TemplateForm selectedTemplate={selectedTemplate} campaignId={campaignId} />
+                <TemplateForm selectedTemplate={selectedTemplate} campaignName={campaignName} />
             </div>
         </>
     )

@@ -77,10 +77,10 @@ function CampaignItem({ campaign }: { campaign: Campaign }) {
 
 function StatusBadge({ status }: { status: string }) {
     switch (status) {
-        case 'launched':
+        case 'active':
             return (
                 <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
-                    Launched
+                    Active
                 </span>
             )
         case 'paused':
@@ -91,7 +91,7 @@ function StatusBadge({ status }: { status: string }) {
             )
         default:
             return (
-                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
+                <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
                     {status}
                 </span>
             )

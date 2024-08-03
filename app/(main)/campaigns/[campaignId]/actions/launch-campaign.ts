@@ -2,6 +2,7 @@
 
 import { AuthenticatedHttpClient } from '@/lib/axios'
 import { createSafeActionClient } from 'next-safe-action'
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -10,8 +11,15 @@ const schema = z.object({
 
 const actionClient = createSafeActionClient()
 
-export const updateTemplate = actionClient.schema(schema).action(async ({ parsedInput: {} }) => {
+export const launchCampaignAction = actionClient.schema(schema).action(async ({ parsedInput: { campaign_name } }) => {
     const httpClient = await AuthenticatedHttpClient()
-    // TODO: ROUTE IS: POST /launch_campaign/
-    await httpClient.post('')
+    const res = await httpClient.post('/launch_campaign/', {
+        campaign_name,
+    })
+    if (res.status === 400) {
+        throw new Error('Invalid campaign')
+    }
+
+    revalidatePath(`/campaigns`)
+    revalidatePath(`/campaigns/${campaign_name}`)
 })

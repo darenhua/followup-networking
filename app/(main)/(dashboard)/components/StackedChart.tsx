@@ -99,6 +99,7 @@ export default function StackedChart({ campaignSummaries }: { campaignSummaries:
                         {campaignSummaries.map((summary, i) => {
                             return (
                                 <Bar
+                                    key={i}
                                     dataKey={summary.campaign_name}
                                     stackId="a"
                                     fill={`var(--color-${summary.campaign_name})`}

@@ -36,6 +36,20 @@ export default function ContactsTable({
 }) {
     const [rowSelection, setRowSelection] = useState({})
 
+    const selectedData = Object.keys(rowSelection).map((index) => {
+        const i = Number(index)
+        const lead: Contact = contacts[i]
+        return {
+            email: lead.email,
+            first_name: lead.first_name,
+            last_name: lead.last_name,
+            company: lead.company,
+            type: lead.type,
+            title: lead.title,
+            university: lead.university,
+        }
+    })
+
     return (
         <div className="flex flex-1 flex-col">
             <Filters
@@ -44,6 +58,7 @@ export default function ContactsTable({
                 defaultValues={defaultValues}
                 filterOptions={filterOptions}
                 setRowSelection={setRowSelection}
+                selectedLeads={selectedData}
                 campaignNames={campaignNames}
             />
             <DataTable

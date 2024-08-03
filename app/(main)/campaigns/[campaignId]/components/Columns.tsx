@@ -1,19 +1,7 @@
 'use client'
 
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
 import { ColumnDef } from '@tanstack/react-table'
-import { Trash2 } from 'lucide-react'
+import RemoveButton from './RemoveButton'
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -70,35 +58,9 @@ export const columns: ColumnDef<CampaignEmail>[] = [
     {
         id: 'remove',
         cell: ({ row }) => {
-            const email = row.original
+            const lead = row.original
 
-            return (
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button size={'icon'} variant="ghost">
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Confirm remove from campaign.</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                Are you sure you want to remove {email.email} from your campaign?
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                                onClick={async () => {
-                                    await console.log('hi')
-                                }}
-                            >
-                                Continue
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            )
+            return <RemoveButton campaignName={lead.campaign_name} deleteEmail={lead.email} />
         },
     },
     // ...

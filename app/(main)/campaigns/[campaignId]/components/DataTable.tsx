@@ -3,6 +3,7 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useRouter } from 'next/navigation'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -16,6 +17,7 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
         manualPagination: true,
         getCoreRowModel: getCoreRowModel(),
     })
+    const router = useRouter()
 
     return (
         <div className="mb-6 rounded-md border">

@@ -13,19 +13,19 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { Trash2 } from 'lucide-react'
+import { Rocket } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { removeFromCampaignAction } from '../actions/remove-from-campaign'
+import { launchCampaignAction } from '../actions/launch-campaign'
 
-export default function RemoveButton({ campaignName, deleteEmail }: { campaignName: string; deleteEmail: string }) {
+export default function LaunchButton({ campaignName }: { campaignName: string }) {
     const [open, setOpen] = useState(false)
 
-    const removeFromCampaign = useAction(removeFromCampaignAction, {
+    const launchCampaign = useAction(launchCampaignAction, {
         onSuccess: () => {
             setOpen(false)
-            toast.success(`Lead deleted from ${campaignName}`)
+            toast.success(`Campaign ${campaignName} launched!`)
         },
         onError: () => {
             toast.error('Sorry, something went wrong.')
@@ -35,24 +35,24 @@ export default function RemoveButton({ campaignName, deleteEmail }: { campaignNa
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Button size={'icon'} variant="ghost">
-                    <Trash2 className="h-4 w-4 text-red-500" />
+                <Button className="bg-green-600 hover:bg-green-700">
+                    <Rocket className="mr-3 h-4 w-4" />
+                    Launch Campaign
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm remove from campaign.</AlertDialogTitle>
+                    <AlertDialogTitle>Confirm campaign launch.</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to remove {deleteEmail} from your campaign?
+                        Are you sure you want to launch this campaign? This will begin sending emails to your leads.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction asChild>
                         <ButtonWithLoader
-                            action={removeFromCampaign}
+                            action={launchCampaign}
                             params={{
-                                delete_list: [deleteEmail],
                                 campaign_name: campaignName,
                             }}
                         >

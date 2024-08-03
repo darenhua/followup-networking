@@ -1,8 +1,11 @@
 import Breadcrumbs from '@/components/Breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { AuthenticatedHttpClient } from '@/lib/axios'
-import { Rocket } from 'lucide-react'
+import { Mail } from 'lucide-react'
+import Link from 'next/link'
+import LaunchButton from './components/LaunchButton'
 import LeadsTable from './components/LeadsTable'
+import PauseButton from './components/PauseButton'
 
 export default async function Page({
     params,
@@ -49,10 +52,19 @@ export default async function Page({
         universityOptions: res.data.distinct_university,
     }
 
+    let campaignTotal = 0
+    if (campaignEmails.length > 0) {
+        const userId = campaignEmails[0]['user']
+        const campaignTotalRes = await httpClient.get(
+            `/leads/total?campaign_name=${params.campaignId}&user_id=${userId}`,
+        )
+        campaignTotal = campaignTotalRes.data['total_leads']
+    }
+
     const paginationProps = {
         limit,
         page,
-        total: campaignEmails.length,
+        total: campaignTotal,
         from,
         to,
     }
@@ -60,6 +72,7 @@ export default async function Page({
         campaign_name: params.campaignId,
     })
 
+    const status = statusRes.data['status']
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <div className="mt-2 flex flex-col justify-center">
@@ -70,13 +83,10 @@ export default async function Page({
                             {params.campaignId} Campaign
                         </h1>
                         <div>
-                            <StatusBadge status={statusRes.data['status']} />
+                            <StatusBadge status={status} />
                         </div>
                     </div>
-                    <Button className="bg-green-600 hover:bg-green-700">
-                        <Rocket className="mr-3 h-4 w-4" />
-                        Launch Campaign
-                    </Button>
+                    <InstantlyButton status={status} campaignName={params.campaignId} />
                 </div>
             </div>
             <div className="flex flex-1 flex-col">
@@ -93,12 +103,30 @@ export default async function Page({
     )
 }
 
+function InstantlyButton({ status, campaignName }: { status: string; campaignName: string }) {
+    switch (status) {
+        case 'active':
+            return <PauseButton campaignName={campaignName} />
+        case 'paused':
+            return <LaunchButton campaignName={campaignName} />
+        default:
+            return (
+                <Link href="mailto:dhua@hamilton.edu">
+                    <Button size="sm" variant={'destructive'} className="w-full">
+                        <Mail className="mr-3 h-4 w-4" />
+                        Contact Follow Up Support
+                    </Button>
+                </Link>
+            )
+    }
+}
+
 function StatusBadge({ status }: { status: string }) {
     switch (status) {
-        case 'launched':
+        case 'active':
             return (
                 <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
-                    Launched
+                    Active
                 </span>
             )
         case 'paused':
@@ -109,7 +137,7 @@ function StatusBadge({ status }: { status: string }) {
             )
         default:
             return (
-                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
+                <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
                     {status}
                 </span>
             )

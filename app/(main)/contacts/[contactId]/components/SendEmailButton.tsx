@@ -20,7 +20,7 @@ export default function SendEmailButton({
     name,
     templates,
 }: {
-    contactId: string
+    contactId: number
     name: string
     templates: Template[]
 }) {

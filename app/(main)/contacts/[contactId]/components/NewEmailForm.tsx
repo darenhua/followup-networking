@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { SubmitFormButton } from '@/components/SubmitFormButton'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -36,8 +36,13 @@ export default function NewEmailForm({
         form.setValue('body', defaultValues.body)
     }, [form, JSON.stringify(defaultValues)])
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         toast.success('Email has been sent.')
+        await new Promise((res) => {
+            setTimeout(() => {
+                res('hi')
+            }, 10000)
+        })
         closeSheet()
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
@@ -73,10 +78,10 @@ export default function NewEmailForm({
                         </FormItem>
                     )}
                 />
-                <Button className="mr-auto mt-12" type="submit">
+                <SubmitFormButton className="mr-auto mt-12">
                     <Send className="mr-3 h-4 w-4" />
                     Submit
-                </Button>
+                </SubmitFormButton>
             </form>
         </Form>
     )

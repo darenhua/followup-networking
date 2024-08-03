@@ -1,34 +1,48 @@
 'use server'
 
-import { AuthenticatedHttpClient } from '@/lib/axios'
+import { getUserOrRedirect } from '@/lib/auth'
+import { AnonHttpClient } from '@/lib/axios'
 import { createSafeActionClient } from 'next-safe-action'
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 const lead = z.object({
-    email: z.string().email(),
-    first_name: z.string().min(1),
-    last_name: z.string().min(1),
-    company: z.string().min(1),
-    type: z.string().min(1),
-    title: z.string().min(1),
-    university: z.string().min(1),
+    email: z.string(),
+    first_name: z.string(),
+    last_name: z.string(),
+    company: z.string(),
+    type: z.string(),
+    title: z.string(),
+    university: z.string(),
 })
 
 const schema = z.object({
     selected_leads: z.array(lead),
     campaign_name: z.string().min(1),
-    user_id: z.number(),
 })
 
 const actionClient = createSafeActionClient()
 
-export const updateTemplate = actionClient.schema(schema).action(async ({ parsedInput }) => {
-    const httpClient = await AuthenticatedHttpClient()
-    // TODO: ROUTE IS: POST /upload_to_campaign/
-    try {
-        await httpClient.post('upload_to_campaign/', parsedInput)
-    } catch (error ) {
-        console.error(error)
-        throw new Error("Sorry, something went wrong")
-    }
-})
+export const addToCampaignAction = actionClient
+    .schema(schema)
+    .action(async ({ parsedInput: { selected_leads, campaign_name } }) => {
+        const user = await getUserOrRedirect()
+        const httpClient = await AnonHttpClient()
+        console.log({
+            selected_leads,
+            campaign_name,
+            user_id: user.user,
+        })
+        const res = await httpClient.post('/upload_to_campaign/', {
+            selected_leads,
+            campaign_name,
+            user_id: user.user,
+        })
+
+        if (res.status === 400) {
+            throw new Error('Sorry, something went wrong.')
+        }
+
+        revalidatePath(`/contacts`)
+        // revalidatePath(`/contacts/`)
+    })

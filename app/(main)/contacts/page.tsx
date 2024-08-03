@@ -9,8 +9,6 @@ export default async function Page({
 }) {
     // Pagination logic
     const page = typeof searchParams.page === 'string' ? Number(searchParams.page) : 1
-    const limit = typeof searchParams.limit === 'string' ? Number(searchParams.limit) : 50
-    const { from, to } = { from: (page - 1) * limit, to: page * limit }
 
     for (const searchParam of Object.values(searchParams)) {
         if (Array.isArray(searchParam)) {
@@ -45,10 +43,16 @@ export default async function Page({
         universityOptions: contactsRes.data.distinct_university,
     }
 
+    const totalContactsRes = await httpClient.get(`/contacts/total/`)
+    const totalContacts = totalContactsRes.data['total_contacts']
+
+    const limit = typeof searchParams.limit === 'string' ? Number(searchParams.limit) : contacts.length
+    const { from, to } = { from: (page - 1) * limit, to: page * limit }
+
     const paginationProps = {
         limit,
         page,
-        total: contacts.length,
+        total: totalContacts,
         from,
         to,
     }

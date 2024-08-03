@@ -1,13 +1,15 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { SubmitFormButton } from '@/components/SubmitFormButton'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
+import { updateTemplate } from '../actions/update-template'
 import { FollowUpTemplate } from './TemplateSelect'
 
 const formSchema = z.object({
@@ -21,10 +23,10 @@ const formSchema = z.object({
 
 export default function TemplateForm({
     selectedTemplate,
-    campaignId,
+    campaignName,
 }: {
     selectedTemplate: FollowUpTemplate
-    campaignId: number | null
+    campaignName: string | null
 }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -47,13 +49,19 @@ export default function TemplateForm({
         form.setValue('fontSize', selectedTemplate.fontSize)
     }, [form, JSON.stringify(selectedTemplate)])
 
-    const disabled = campaignId === null
+    const disabled = campaignName === null
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        try {
+            const res = await updateTemplate({ template: values, campaignName: campaignName as string })
+            if (res?.serverError || res?.validationErrors) {
+                throw new Error('something went wrong')
+            }
+            toast.success('Templates updated successfully!')
+        } catch (error) {
+            toast.error('Sorry, something went wrong.')
+        }
     }
 
     return (
@@ -133,7 +141,7 @@ export default function TemplateForm({
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Submit</Button>
+                <SubmitFormButton>Submit</SubmitFormButton>
             </form>
         </Form>
     )

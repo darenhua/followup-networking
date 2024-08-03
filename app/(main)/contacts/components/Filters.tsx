@@ -1,5 +1,6 @@
 'use client'
 
+import { ButtonWithLoader } from '@/components/ButtonWithLoader'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,10 +19,13 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SelectGroup } from '@radix-ui/react-select'
 import { Filter, Plus } from 'lucide-react'
+import { useAction } from 'next-safe-action/hooks'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useForm, useFormContext } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
+import { addToCampaignAction } from '../actions/add-to-campaign'
 import SearchFilter from './SearchFilter'
 
 export const filtersFormSchema = z.object({
@@ -33,6 +37,7 @@ export const filtersFormSchema = z.object({
 })
 
 export default function Filters({
+    selectedLeads,
     defaultValues,
     filterOptions,
     search,
@@ -40,6 +45,7 @@ export default function Filters({
     setRowSelection,
     campaignNames,
 }: {
+    selectedLeads: any
     defaultValues: z.infer<typeof filtersFormSchema>
     filterOptions: {
         typeOptions: string[]
@@ -58,7 +64,20 @@ export default function Filters({
         defaultValues: defaultValues,
     })
 
+    const [isOpen, setIsOpen] = useState(false)
     const [campaignName, setCampaignName] = useState<string | null>(null)
+
+    const addToCampaign = useAction(addToCampaignAction, {
+        onSuccess: () => {
+            toast.success(`Add to campaign successful!`)
+            setRowSelection({})
+            setIsOpen(false)
+        },
+        onError: (e) => {
+            console.log(e)
+            toast.error(`Sorry, something went wrong.`)
+        },
+    })
 
     useEffect(() => {
         form.reset(defaultValues)
@@ -89,7 +108,7 @@ export default function Filters({
 
             <div className="flex w-full items-center gap-3 lg:w-fit">
                 <div>
-                    <AlertDialog>
+                    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                         <AlertDialogTrigger asChild>
                             <Button disabled={selectedRowsCount === 0}>
                                 <Plus className="mr-3 h-4 w-4" />
@@ -126,13 +145,17 @@ export default function Filters({
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                    disabled={campaignName === null}
-                                    onClick={async () => {
-                                        setRowSelection({})
-                                    }}
-                                >
-                                    Continue
+                                <AlertDialogAction asChild>
+                                    <ButtonWithLoader
+                                        disabled={campaignName === null}
+                                        action={addToCampaign}
+                                        params={{
+                                            selected_leads: selectedLeads,
+                                            campaign_name: campaignName!,
+                                        }}
+                                    >
+                                        Continue
+                                    </ButtonWithLoader>
                                 </AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>

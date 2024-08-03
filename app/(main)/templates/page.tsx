@@ -1,7 +1,6 @@
 import { AuthenticatedHttpClient } from '@/lib/axios'
 import TemplateSelect from './components/TemplateSelect'
 
-
 export default async function Page() {
     const httpClient = AuthenticatedHttpClient()
     let templates = null

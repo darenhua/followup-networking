@@ -4,7 +4,7 @@ import { AuthenticatedHttpClient } from '@/lib/axios'
 import { createSafeActionClient } from 'next-safe-action'
 import { z } from 'zod'
 
-const schema = z.object({
+const template = z.object({
     subject: z.string().min(1, { message: 'Please enter a subject' }),
     initialBody: z.string().min(1, { message: 'Please enter your initial cold email' }),
     firstFollowUp: z.string().min(1, { message: 'Please enter your first follow up email' }),
@@ -13,65 +13,75 @@ const schema = z.object({
     fontFamily: z.string().min(1),
 })
 
+const schema = z.object({
+    template: template,
+    campaignName: z.string(),
+})
+
 const actionClient = createSafeActionClient()
 
-export const updateTemplate = actionClient.schema(schema).action(async ({ parsedInput }) => {
-    const httpClient = await AuthenticatedHttpClient()
+export const updateTemplate = actionClient
+    .schema(schema)
+    .action(async ({ parsedInput: { template, campaignName } }) => {
+        const httpClient = await AuthenticatedHttpClient()
 
-    const updatedSequences = []
-    updatedSequences.push({
-        type: 'email',
-        delay: 1,
-        variants: [
-            {
-                subject: parsedInput.subject,
-                body: `<div>${parsedInput.initialBody}</div>`,
-            },
-        ],
-    })
-    updatedSequences.push({
-        type: 'email',
-        delay: 2,
-        variants: [
-            {
-                subject: parsedInput.subject,
-                body: `<div>${parsedInput.firstFollowUp}</div>`,
-            },
-        ],
-    })
-    updatedSequences.push({
-        type: 'email',
-        delay: 3,
-        variants: [
-            {
-                subject: parsedInput.subject,
-                body: `<div>${parsedInput.secondFollowUp}</div>`,
-            },
-        ],
-    })
+        const summaryRes = await httpClient.post('get_campaign_summary/', { campaign_name: campaignName })
+        const campaignId = summaryRes.data['campaign_id']
 
-    const followUpEmail = process.env.INSTANTLY_API_EMAIL
-    const followUpPassword = process.env.INSTANTLY_API_PASSWORD
-
-    const requestBody = {
-        email: followUpEmail,
-        password: followUpPassword,
-        campaign_name: 'Test',
-        sequence_data: {
-            sequences: [
+        const updatedSequences = []
+        updatedSequences.push({
+            type: 'email',
+            delay: 1,
+            variants: [
                 {
-                    steps: updatedSequences,
+                    subject: template.subject,
+                    body: `<div>${template.initialBody}</div>`,
                 },
             ],
-            campaignID: '0543c1fc-c1d9-42c4-afd1-7916c4ac17ac',
-            orgID: '174fc505-4a13-425c-9579-bf46339fbf98',
-        },
-    }
-    // TODO: Route is POST /update_sequences/
+        })
+        updatedSequences.push({
+            type: 'email',
+            delay: 2,
+            variants: [
+                {
+                    subject: template.subject,
+                    body: `<div>${template.firstFollowUp}</div>`,
+                },
+            ],
+        })
+        updatedSequences.push({
+            type: 'email',
+            delay: 3,
+            variants: [
+                {
+                    subject: template.subject,
+                    body: `<div>${template.secondFollowUp}</div>`,
+                },
+            ],
+        })
 
-    try {
-        await httpClient.post('update_sequences/', requestBody)
-    } catch {
-        throw new Error('Sorry, something went wrong')
-    }
-})
+        const followUpEmail = process.env.INSTANTLY_API_EMAIL
+        const followUpPassword = process.env.INSTANTLY_API_PASSWORD
+
+        const requestBody = {
+            email: followUpEmail,
+            password: followUpPassword,
+            campaign_name: campaignName,
+            sequence_data: {
+                sequences: [
+                    {
+                        steps: updatedSequences,
+                    },
+                ],
+                campaignID: campaignId,
+                orgID: '174fc505-4a13-425c-9579-bf46339fbf98',
+            },
+        }
+        console.log(JSON.stringify(requestBody, null, 2))
+
+        try {
+            await httpClient.post('update_sequences/', requestBody)
+        } catch {
+            throw new Error('Sorry, something went wrong')
+        }
+    })
