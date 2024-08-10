@@ -48,6 +48,8 @@ export default async function Page({ params }: { params: { contactId: number } }
         ...templates,
     ]
 
+    console.log(contact)
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <div className="mt-2 flex flex-col justify-center">

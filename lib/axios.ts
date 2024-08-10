@@ -14,7 +14,7 @@ export function AuthenticatedHttpClient() {
 
     return axios.create({
         baseURL: `${apiUrl}/`,
-        timeout: 5000,
+        timeout: 0,
         signal: AbortSignal.timeout(5000),
         headers: {
             'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export function AuthenticatedHttpClient() {
 export function AnonHttpClient() {
     return axios.create({
         baseURL: `${apiUrl}/`,
-        timeout: 1000,
+        timeout: 0,
         headers: { 'Content-Type': 'application/json' },
     })
 }

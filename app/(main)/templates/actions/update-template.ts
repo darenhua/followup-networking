@@ -1,5 +1,6 @@
 'use server'
 
+import { getUserOrRedirect } from '@/lib/auth'
 import { AuthenticatedHttpClient } from '@/lib/axios'
 import { createSafeActionClient } from 'next-safe-action'
 import { z } from 'zod'
@@ -25,6 +26,7 @@ export const updateTemplate = actionClient
     .action(async ({ parsedInput: { template, campaignName } }) => {
         const httpClient = await AuthenticatedHttpClient()
 
+        const user = await getUserOrRedirect()
         const summaryRes = await httpClient.post('get_campaign_summary/', { campaign_name: campaignName })
         const campaignId = summaryRes.data['campaign_id']
 
@@ -64,6 +66,7 @@ export const updateTemplate = actionClient
         const followUpPassword = process.env.INSTANTLY_API_PASSWORD
 
         const requestBody = {
+            user_id: user.user,
             email: followUpEmail,
             password: followUpPassword,
             campaign_name: campaignName,
@@ -77,7 +80,6 @@ export const updateTemplate = actionClient
                 orgID: '174fc505-4a13-425c-9579-bf46339fbf98',
             },
         }
-        console.log(JSON.stringify(requestBody, null, 2))
 
         try {
             await httpClient.post('update_sequences/', requestBody)

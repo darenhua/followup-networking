@@ -8,6 +8,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { sendEmailAction } from '../actions/send-email'
 
 const formSchema = z.object({
     subject: z.string().min(1).max(50),
@@ -38,15 +39,11 @@ export default function NewEmailForm({
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         toast.success('Email has been sent.')
-        await new Promise((res) => {
-            setTimeout(() => {
-                res('hi')
-            }, 10000)
-        })
+        const res = await sendEmailAction({ subject: values.subject, body: values.body, to: 'dhua@hamilton.edu' })
+        if (res?.serverError || res?.validationErrors) {
+            toast.error("Sorry, we couldn't send your email. Please try again.")
+        }
         closeSheet()
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
     }
 
     return (

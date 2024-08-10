@@ -17,8 +17,8 @@ const formSchema = z.object({
     initialBody: z.string().min(1, { message: 'Please enter your initial cold email' }),
     firstFollowUp: z.string().min(1, { message: 'Please enter your first follow up email' }),
     secondFollowUp: z.string().min(1, { message: 'Please enter your second follow up email' }),
-    fontSize: z.string().min(1),
-    fontFamily: z.string().min(1),
+    // fontSize: z.string().min(1),
+    // fontFamily: z.string().min(1),
 })
 
 export default function TemplateForm({
@@ -35,8 +35,8 @@ export default function TemplateForm({
             initialBody: '',
             firstFollowUp: '',
             secondFollowUp: '',
-            fontFamily: 'Arial',
-            fontSize: '14px',
+            // fontFamily: 'Arial',
+            // fontSize: '14px',
         },
     })
 
@@ -45,8 +45,8 @@ export default function TemplateForm({
         form.setValue('initialBody', selectedTemplate.initialBody)
         form.setValue('firstFollowUp', selectedTemplate.firstFollowUp)
         form.setValue('secondFollowUp', selectedTemplate.secondFollowUp)
-        form.setValue('fontFamily', selectedTemplate.fontFamily)
-        form.setValue('fontSize', selectedTemplate.fontSize)
+        // form.setValue('fontFamily', selectedTemplate.fontFamily)
+        // form.setValue('fontSize', selectedTemplate.fontSize)
     }, [form, JSON.stringify(selectedTemplate)])
 
     const disabled = campaignName === null
@@ -54,7 +54,10 @@ export default function TemplateForm({
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            const res = await updateTemplate({ template: values, campaignName: campaignName as string })
+            const res = await updateTemplate({
+                template: { ...values, fontFamily: 'Arial', fontSize: '14px' },
+                campaignName: campaignName as string,
+            })
             if (res?.serverError || res?.validationErrors) {
                 throw new Error('something went wrong')
             }

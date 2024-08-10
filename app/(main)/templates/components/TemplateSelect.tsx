@@ -3,7 +3,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@radix-ui/react-label'
 import { useState } from 'react'
-import { toast } from 'sonner'
 import TemplateForm from './TemplateForm'
 
 interface UserEmail {
@@ -49,14 +48,12 @@ export default function TemplateSelect({
         const campaignId = templates.campaign_names.find((campaign) => campaign.name === campaignName)?.id
 
         if (!campaignId) {
-            toast.error('Sorry, something went wrong.')
             return null
         }
 
         const campaign = templates.user_emails.find((campaign) => campaign.campaign === campaignId)
 
         if (!campaign) {
-            toast.error('Sorry, something went wrong.')
             return null
         }
 
