@@ -28,7 +28,7 @@ export default function ProfileDropdown() {
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                    <Link href="mailto:dhua@hamilton.edu">Contact Support</Link>
+                    <Link href="mailto:followupnowinfo@gmail.com">Contact Support</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                     <Link href="/onboarding">Redo Onboarding</Link>

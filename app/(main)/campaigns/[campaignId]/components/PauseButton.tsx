@@ -42,9 +42,9 @@ export default function PauseButton({ campaignName }: { campaignName: string }) 
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm campaign launch.</AlertDialogTitle>
+                    <AlertDialogTitle>Confirm campaign pause.</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to launch this campaign? This will begin sending emails to your leads.
+                        Are you sure you want to pause this campaign? This will stop sending emails to your leads.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

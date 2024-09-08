@@ -28,11 +28,7 @@ export const addToCampaignAction = actionClient
     .action(async ({ parsedInput: { selected_leads, campaign_name } }) => {
         const user = await getUserOrRedirect()
         const httpClient = await AnonHttpClient()
-        console.log({
-            selected_leads,
-            campaign_name,
-            user_id: user.user,
-        })
+
         const res = await httpClient.post('/upload_to_campaign/', {
             selected_leads,
             campaign_name,

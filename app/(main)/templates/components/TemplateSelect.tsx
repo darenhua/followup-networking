@@ -85,13 +85,15 @@ export default function TemplateSelect({
         const campaign = getTemplateFromCampaignName(campaignNames[0])
         return getSelectedTemplateOrDefault(campaign)
     })
-    const [campaignId, setCampaignId] = useState<number | null>(() => {
-        const campaign = getTemplateFromCampaignName(campaignNames[0])
-        return campaign?.campaign ?? null
-    })
+    // const [campaignId, setCampaignId] = useState<number | null>(() => {
+    //     const campaign = getTemplateFromCampaignName(campaignNames[0])
+    //     return campaign?.campaign ?? null
+    // })
 
-    const campaignName: string | null =
-        templates.campaign_names.find((campaign) => campaign.id === campaignId)?.name ?? null
+    const [campaignName, setCampaignName] = useState<string>(campaignNames[0])
+
+    // const campaignName: string | null =
+    //     templates.campaign_names.find((campaign) => campaign.id === campaignId)?.name ?? null
 
     return (
         <>
@@ -102,9 +104,10 @@ export default function TemplateSelect({
                     onValueChange={(value) => {
                         const campaign = getTemplateFromCampaignName(value)
                         const newTemplate = getSelectedTemplateOrDefault(campaign)
-                        const campaignId = campaign?.campaign ?? null
+                        // const campaignId = campaign?.campaign ?? null
+                        setCampaignName(value)
                         setSelectedTemplate(newTemplate)
-                        setCampaignId(campaignId)
+                        // setCampaignId(campaignId)
                     }}
                 >
                     <SelectTrigger className="mt-3 w-[300px]">

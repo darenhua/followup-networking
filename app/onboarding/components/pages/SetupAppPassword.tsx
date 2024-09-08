@@ -51,7 +51,11 @@ export default function SetupAppPassword({ next, back }: { next: () => void; bac
                     <ol className="max-w-72">
                         <li className="list-decimal">
                             Go to your Google Account's{' '}
-                            <a href="" className="text-blue-500 underline" target="_blank">
+                            <a
+                                href="https://myaccount.google.com/security"
+                                className="text-blue-500 underline"
+                                target="_blank"
+                            >
                                 Security Settings
                             </a>
                             .

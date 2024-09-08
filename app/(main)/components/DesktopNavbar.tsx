@@ -48,7 +48,7 @@ export default function DesktopNavbar() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="center" className="w-64">
                             <DropdownMenuItem>
-                                <Link href="mailto:dhua@hamilton.edu">Contact Support</Link>
+                                <Link href="mailto:followupnowinfo@gmail.com">Contact Support</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <Link href="/onboarding">Redo Onboarding</Link>

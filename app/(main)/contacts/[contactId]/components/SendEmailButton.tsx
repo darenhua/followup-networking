@@ -19,10 +19,12 @@ export default function SendEmailButton({
     contactId,
     name,
     templates,
+    toEmail,
 }: {
     contactId: number
     name: string
     templates: Template[]
+    toEmail: string
 }) {
     const [selectedTemplateId, setSelectedTemplateId] = useState<string>('none')
     const [sheetOpen, setSheetOpen] = useState<boolean>(false)
@@ -68,7 +70,12 @@ export default function SendEmailButton({
                     </div>
                 </SheetHeader>
                 <div className="grid gap-4 py-4">
-                    <NewEmailForm defaultValues={defaultValues} closeSheet={() => setSheetOpen(false)} name={name} />
+                    <NewEmailForm
+                        toEmail={toEmail}
+                        defaultValues={defaultValues}
+                        closeSheet={() => setSheetOpen(false)}
+                        name={name}
+                    />
                 </div>
             </SheetContent>
         </Sheet>

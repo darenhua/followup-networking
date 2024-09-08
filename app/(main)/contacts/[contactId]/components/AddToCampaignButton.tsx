@@ -51,7 +51,7 @@ export default function AddToCampaignButton({ lead, campaignNames }: { lead: any
                 <AlertDialogHeader>
                     <AlertDialogTitle>Adding to campaign.</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Please select which campaign you are {lead.email} to.
+                        Please select which campaign you are adding {lead.email} to.
                     </AlertDialogDescription>
                     <div className="my-3">
                         <Select

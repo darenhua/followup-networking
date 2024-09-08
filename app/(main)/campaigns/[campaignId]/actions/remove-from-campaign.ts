@@ -18,7 +18,6 @@ export const removeFromCampaignAction = actionClient
     .action(async ({ parsedInput: { delete_list, campaign_name } }) => {
         const user = await getUserOrRedirect()
         const httpClient = await AnonHttpClient()
-        console.log(user.id)
 
         const res = await httpClient.post('/delete_leads/', {
             delete_list,

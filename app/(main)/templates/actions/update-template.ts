@@ -2,6 +2,7 @@
 
 import { getUserOrRedirect } from '@/lib/auth'
 import { AuthenticatedHttpClient } from '@/lib/axios'
+import { JSDOM } from 'jsdom'
 import { createSafeActionClient } from 'next-safe-action'
 import { z } from 'zod'
 
@@ -21,12 +22,21 @@ const schema = z.object({
 
 const actionClient = createSafeActionClient()
 
+function makeHTML(str: string) {
+    const doc = new JSDOM(str).window.document
+    const isHTML = Array.from(doc.body.childNodes).some((node) => node.nodeType === 1)
+    if (isHTML) {
+        return str
+    }
+    return `<div>${str}</div>`
+}
+
 export const updateTemplate = actionClient
     .schema(schema)
     .action(async ({ parsedInput: { template, campaignName } }) => {
         const httpClient = await AuthenticatedHttpClient()
-
         const user = await getUserOrRedirect()
+
         const summaryRes = await httpClient.post('get_campaign_summary/', { campaign_name: campaignName })
         const campaignId = summaryRes.data['campaign_id']
 
@@ -37,7 +47,7 @@ export const updateTemplate = actionClient
             variants: [
                 {
                     subject: template.subject,
-                    body: `<div>${template.initialBody}</div>`,
+                    body: makeHTML(template.initialBody),
                 },
             ],
         })
@@ -47,7 +57,7 @@ export const updateTemplate = actionClient
             variants: [
                 {
                     subject: template.subject,
-                    body: `<div>${template.firstFollowUp}</div>`,
+                    body: makeHTML(template.firstFollowUp),
                 },
             ],
         })
@@ -57,7 +67,7 @@ export const updateTemplate = actionClient
             variants: [
                 {
                     subject: template.subject,
-                    body: `<div>${template.secondFollowUp}</div>`,
+                    body: makeHTML(template.secondFollowUp),
                 },
             ],
         })

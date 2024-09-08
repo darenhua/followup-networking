@@ -111,7 +111,7 @@ function InstantlyButton({ status, campaignName }: { status: string; campaignNam
             return <LaunchButton campaignName={campaignName} />
         default:
             return (
-                <Link href="mailto:dhua@hamilton.edu">
+                <Link href="mailto:followupnowinfo@gmail.com">
                     <Button size="sm" variant={'destructive'} className="w-full">
                         <Mail className="mr-3 h-4 w-4" />
                         Contact Follow Up Support

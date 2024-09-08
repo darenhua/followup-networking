@@ -10,7 +10,7 @@ export default async function CtaCard() {
                 <CardDescription>Unlock all features and get unlimited access to our support team.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Link href="mailto:dhua@hamilton.edu">
+                <Link href="mailto:followupnowinfo@gmail.com">
                     <Button size="sm" className="w-full">
                         Upgrade
                     </Button>

@@ -21,12 +21,17 @@ const formSchema = z.object({
     // fontFamily: z.string().min(1),
 })
 
+function htmlToString(html: string | null): string {
+    if (!html) return ''
+    return new DOMParser().parseFromString(html, 'text/html').body.textContent ?? ''
+}
+
 export default function TemplateForm({
     selectedTemplate,
     campaignName,
 }: {
     selectedTemplate: FollowUpTemplate
-    campaignName: string | null
+    campaignName: string
 }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -42,9 +47,9 @@ export default function TemplateForm({
 
     useEffect(() => {
         form.setValue('subject', selectedTemplate.subject)
-        form.setValue('initialBody', selectedTemplate.initialBody)
-        form.setValue('firstFollowUp', selectedTemplate.firstFollowUp)
-        form.setValue('secondFollowUp', selectedTemplate.secondFollowUp)
+        form.setValue('initialBody', htmlToString(selectedTemplate.initialBody))
+        form.setValue('firstFollowUp', htmlToString(selectedTemplate.firstFollowUp))
+        form.setValue('secondFollowUp', htmlToString(selectedTemplate.secondFollowUp))
         // form.setValue('fontFamily', selectedTemplate.fontFamily)
         // form.setValue('fontSize', selectedTemplate.fontSize)
     }, [form, JSON.stringify(selectedTemplate)])
@@ -63,6 +68,7 @@ export default function TemplateForm({
             }
             toast.success('Templates updated successfully!')
         } catch (error) {
+            console.error(error)
             toast.error('Sorry, something went wrong.')
         }
     }
@@ -78,7 +84,7 @@ export default function TemplateForm({
                             <FormLabel>Email Subject</FormLabel>
                             <FormControl>
                                 <Input
-                                    disabled={disabled}
+                                    disabled={field.value !== ''}
                                     placeholder="Fellow Cornellian Seeking Advice for Investment Banking at {{companyName}}"
                                     {...field}
                                 />
@@ -95,7 +101,7 @@ export default function TemplateForm({
                             <FormLabel>Initial Cold Email</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    disabled={disabled}
+                                    // disabled={disabled}
                                     placeholder="Hello {{firstName}}..."
                                     className="resize-none"
                                     rows={10}
@@ -114,7 +120,7 @@ export default function TemplateForm({
                             <FormLabel>First Follow-Up</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    disabled={disabled}
+                                    // disabled={disabled}
                                     placeholder="Hey {{firstName}}!"
                                     className="resize-none"
                                     rows={10}
@@ -133,7 +139,7 @@ export default function TemplateForm({
                             <FormLabel>Second Follow-Up</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    disabled={disabled}
+                                    // disabled={disabled}
                                     placeholder="Just following up on my previous message..."
                                     className="resize-none"
                                     rows={10}

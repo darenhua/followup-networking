@@ -19,10 +19,12 @@ export default function NewEmailForm({
     defaultValues,
     name,
     closeSheet,
+    toEmail,
 }: {
     defaultValues: z.infer<typeof formSchema>
     name: string
     closeSheet: () => void
+    toEmail: string
 }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -38,11 +40,17 @@ export default function NewEmailForm({
     }, [form, JSON.stringify(defaultValues)])
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        toast.success('Email has been sent.')
-        const res = await sendEmailAction({ subject: values.subject, body: values.body, to: 'dhua@hamilton.edu' })
+        const res = await sendEmailAction({
+            subject: values.subject,
+            body: values.body,
+            to: toEmail,
+        })
         if (res?.serverError || res?.validationErrors) {
             toast.error("Sorry, we couldn't send your email. Please try again.")
+            closeSheet()
+            return
         }
+        toast.success('Email has been sent.')
         closeSheet()
     }
 
