@@ -28,18 +28,13 @@ export default async function Page({
 
     const httpClient = AuthenticatedHttpClient()
 
-    const campaignRes = await httpClient.get('/campaign')
-    const campaign = campaignRes.data['campaign_emails']
-    const campaignEmails = campaign.map((c: any) => c.email)
-
     const backendSearchParams = new URLSearchParams(defaultFilters)
 
     const contactsRes = await httpClient.get(`contact-list/?q=${search}&${backendSearchParams.toString()}&page=${page}`)
     const contacts: Contact[] = contactsRes.data.contacts
 
-    const filteredContacts = contacts.filter((contact) => !campaignEmails.includes(contact.email))
-
-    const campaignNames = contactsRes.data.campaign_names
+    const res = await httpClient.get('/campaign')
+    const campaignNames = res.data['distinct_campaigns']
 
     const filterOptions = {
         typeOptions: contactsRes.data.distinct_types,
@@ -72,7 +67,7 @@ export default async function Page({
                 defaultValues={defaultFilters}
                 filterOptions={filterOptions}
                 search={search}
-                contacts={filteredContacts}
+                contacts={contacts}
                 paginationProps={paginationProps}
                 campaignNames={campaignNames}
             />
