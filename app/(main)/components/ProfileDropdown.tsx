@@ -30,9 +30,9 @@ export default function ProfileDropdown() {
                 <DropdownMenuItem>
                     <Link href="mailto:followupnowinfo@gmail.com">Contact Support</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                {/* <DropdownMenuItem>
                     <Link href="/onboarding">Redo Onboarding</Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => startTransition(() => logout())}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
