@@ -64,6 +64,8 @@ export default function TemplateForm({
                 campaignName: campaignName as string,
             })
             if (res?.serverError || res?.validationErrors) {
+                console.error('server', res?.serverError)
+                console.error('valid', res?.validationErrors)
                 throw new Error('something went wrong')
             }
             toast.success('Templates updated successfully!')
