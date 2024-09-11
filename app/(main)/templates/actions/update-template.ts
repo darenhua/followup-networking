@@ -91,9 +91,5 @@ export const updateTemplate = actionClient
             },
         }
 
-        try {
-            await httpClient.post('update_sequences/', requestBody)
-        } catch {
-            throw new Error('Sorry, something went wrong')
-        }
+        await httpClient.post('update_sequences/', requestBody)
     })
